@@ -25,6 +25,10 @@ interface Profile {
   email: string;
   userId: string;
 }
+interface Options {
+  email: string;
+  link: string;
+}
 
 export const sendVerificationMail = async (token: string, profile: Profile) => {
   const transport = generateMailTransporter();
@@ -63,6 +67,40 @@ export const sendVerificationMail = async (token: string, profile: Profile) => {
         filename: "welcome.png",
         path: path.join(__dirname, "../mail/welcome.png"),
         cid: "welcome",
+      },
+    ],
+  });
+};
+
+export const sendForgotPasswordLink = async (options: Options) => {
+  const transport = generateMailTransporter();
+  const { email, link } = options;
+
+  const resetMsg = `We just received a request that you forgot your password. No problem you can recover your password by using attached link!`;
+
+  transport.sendMail({
+    to: email,
+    from: VERIFICATION_EMAIL,
+    subject: "Reset Password Link",
+
+    html: generateTemplate({
+      title: "Forgot Password!",
+      message: resetMsg,
+      logo: "cid:logo",
+      banner: "cid:forget_password",
+      link,
+      btnTitle: "Reset Password",
+    }),
+    attachments: [
+      {
+        filename: "logo.png",
+        path: path.join(__dirname, "../mail/logo.png"),
+        cid: "logo",
+      },
+      {
+        filename: "forget_password.png",
+        path: path.join(__dirname, "../mail/forget_password.png"),
+        cid: "forget_password",
       },
     ],
   });

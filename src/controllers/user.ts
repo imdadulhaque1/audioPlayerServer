@@ -5,6 +5,9 @@ import { generateToken } from "#/utils/helper";
 import { sendVerificationMail } from "#/utils/mail";
 import EmailVerificationToken from "#/models/emailVerificationToken";
 import { isValidObjectId } from "mongoose";
+import PasswordResetToken from "#/models/passwordResetToken";
+import crypto from "crypto";
+import { PASSWORD_RESET_LINK } from "#/utils/variables";
 
 export const create: RequestHandler = async (req: createUser, res) => {
   const { email, password, name } = req.body;
@@ -75,4 +78,22 @@ export const sendReVerificationToken: RequestHandler = async (req, res) => {
   });
 
   res.json({ message: "Please check your email!" });
+};
+
+export const generateForgotPasswordLink: RequestHandler = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ error: " Account not found!" });
+
+  // Generate The Password Reset Link
+  //TODO:---> https://appDomainName.com/reset-password?token=skldjfnlsdkfsdfpowepdfwdelkndslkfnksadfjbskdfbksdfjcksjdfh
+
+  const token = crypto.randomBytes(36).toString("hex");
+
+  await PasswordResetToken.create({ owner: user._id, token });
+
+  const resetLink = `${PASSWORD_RESET_LINK}?token=${token}&userId=${user._id}`;
+
+  res.json({ resetLink });
 };

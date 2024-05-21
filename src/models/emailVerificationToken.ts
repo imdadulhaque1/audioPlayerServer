@@ -28,7 +28,7 @@ const emailVerificationToken = new Schema<
   },
   createdAt: {
     type: Date,
-    expires: 3600, // Token expired times
+    expires: 12 * 3600, // Token will be expired after 1 day
     default: Date.now(),
   },
 });

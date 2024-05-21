@@ -4,12 +4,14 @@ import {
   grantValid,
   sendReVerificationToken,
   verifyEmail,
+  updatePassword,
 } from "#/controllers/user";
 import { isValidPassResetToken } from "#/middleware/auth";
 import { validate } from "#/middleware/validator";
 import {
   createUserSchema,
   TokenAndIDValidation,
+  UpdatePasswordSchema,
 } from "#/utils/validationSchema";
 import { Router } from "express";
 const router = Router();
@@ -24,5 +26,10 @@ router.post(
   isValidPassResetToken,
   grantValid
 );
-
+router.post(
+  "/update-password",
+  validate(UpdatePasswordSchema),
+  isValidPassResetToken,
+  updatePassword
+);
 export default router;

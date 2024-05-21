@@ -4,6 +4,7 @@ import EmailVerificationToken from "#/models/emailVerificationToken";
 import {
   MAILTRAP_PASS,
   MAILTRAP_USER,
+  SIGN_IN_URL,
   VERIFICATION_EMAIL,
 } from "#/utils/variables";
 import { generateTemplate } from "#/mail/template";
@@ -90,6 +91,42 @@ export const sendForgotPasswordLink = async (options: Options) => {
       banner: "cid:forget_password",
       link,
       btnTitle: "Reset Password",
+    }),
+    attachments: [
+      {
+        filename: "logo.png",
+        path: path.join(__dirname, "../mail/logo.png"),
+        cid: "logo",
+      },
+      {
+        filename: "forget_password.png",
+        path: path.join(__dirname, "../mail/forget_password.png"),
+        cid: "forget_password",
+      },
+    ],
+  });
+};
+
+export const sendPassResetSuccessEmail = async (
+  name: string,
+  email: string
+) => {
+  const transport = generateMailTransporter();
+
+  const resetMsg = `Dear ${name}, we just updated your new password. Youn can now sign in with your new password!`;
+
+  transport.sendMail({
+    to: email,
+    from: VERIFICATION_EMAIL,
+    subject: "Password Reset Sucessfully",
+
+    html: generateTemplate({
+      title: "Password Reset Sucessfully!",
+      message: resetMsg,
+      logo: "cid:logo",
+      banner: "cid:forget_password",
+      link: SIGN_IN_URL,
+      btnTitle: "Log In",
     }),
     attachments: [
       {

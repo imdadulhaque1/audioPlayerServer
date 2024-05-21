@@ -26,7 +26,7 @@ interface Profile {
   userId: string;
 }
 
-export const sendVerificationmail = async (token: string, profile: Profile) => {
+export const sendVerificationMail = async (token: string, profile: Profile) => {
   const transport = generateMailTransporter();
   const { name, email, userId } = profile;
 

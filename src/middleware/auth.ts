@@ -1,5 +1,5 @@
-import PasswordResetToken from "#/models/passwordResetToken";
 import { RequestHandler } from "express";
+import PasswordResetToken from "#/models/passwordResetToken";
 
 export const isValidPassResetToken: RequestHandler = async (req, res, next) => {
   const { token, userId } = req.body;
@@ -8,13 +8,13 @@ export const isValidPassResetToken: RequestHandler = async (req, res, next) => {
   if (!resetToken)
     return res
       .status(403)
-      .json({ error: "Unauthorized access || Invalid token!" });
+      .json({ error: "Unauthorized access, invalid token!" });
 
   const matched = await resetToken.compareToken(token);
   if (!matched)
     return res
       .status(403)
-      .json({ error: "Unauthorized access || Invalid token!" });
+      .json({ error: "Unauthorized access, invalid token!" });
 
   next();
 };

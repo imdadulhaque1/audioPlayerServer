@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
-import { MONGO_URI } from "../utils/variables";
+import { MONGO_URI } from "#/utils/variables";
 
+mongoose.set("strictQuery", true);
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log("DB is successfuly connected!");
+    console.log("db is connected");
   })
   .catch((err) => {
-    console.log("DB connection failed!", err);
+    console.log("db connection failed: ", err);
   });

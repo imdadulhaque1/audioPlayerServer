@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import path from "path";
+
+import User from "#/models/user";
 import EmailVerificationToken from "#/models/emailVerificationToken";
 import {
   MAILTRAP_PASS,
@@ -7,6 +9,7 @@ import {
   SIGN_IN_URL,
   VERIFICATION_EMAIL,
 } from "#/utils/variables";
+import { generateToken } from "#/utils/helper";
 import { generateTemplate } from "#/mail/template";
 
 const generateMailTransporter = () => {
@@ -18,6 +21,7 @@ const generateMailTransporter = () => {
       pass: MAILTRAP_PASS,
     },
   });
+
   return transport;
 };
 
@@ -26,33 +30,21 @@ interface Profile {
   email: string;
   userId: string;
 }
-interface Options {
-  email: string;
-  link: string;
-}
 
 export const sendVerificationMail = async (token: string, profile: Profile) => {
   const transport = generateMailTransporter();
+
   const { name, email, userId } = profile;
 
-  //   const token = generateToken();
-  await EmailVerificationToken.create({
-    owner: userId,
-    token,
-  });
-
-  console.log("Token: ", token);
-
-  const welcomeMsg = `Hi ${name}, welcome to Audio Player App! There are sop much thing that we are do for verified users. Use the given OTP to verify  your  email!`;
+  const welcomeMessage = `Hi ${name}, welcome to Podify! There are so much thing that we do for verified users. Use the given OTP to verify your email.`;
 
   transport.sendMail({
     to: email,
     from: VERIFICATION_EMAIL,
-    subject: "Welcome Message",
-    // html: `Your verification token is: ${token}`,
+    subject: "Welcome message",
     html: generateTemplate({
-      title: "Welcome to Audio Player",
-      message: welcomeMsg,
+      title: "Welcome to Podify",
+      message: welcomeMessage,
       logo: "cid:logo",
       banner: "cid:welcome",
       link: "#",
@@ -73,20 +65,26 @@ export const sendVerificationMail = async (token: string, profile: Profile) => {
   });
 };
 
-export const sendForgotPasswordLink = async (options: Options) => {
+interface Options {
+  email: string;
+  link: string;
+}
+
+export const sendForgetPasswordLink = async (options: Options) => {
   const transport = generateMailTransporter();
+
   const { email, link } = options;
 
-  const resetMsg = `We just received a request that you forgot your password. No problem you can recover your password by using attached link!`;
+  const message =
+    "We just received a request that you forgot your password. No problem you can use the link below and create brand new password.";
 
   transport.sendMail({
     to: email,
     from: VERIFICATION_EMAIL,
     subject: "Reset Password Link",
-
     html: generateTemplate({
-      title: "Forgot Password!",
-      message: resetMsg,
+      title: "Forget Password",
+      message,
       logo: "cid:logo",
       banner: "cid:forget_password",
       link,
@@ -113,20 +111,19 @@ export const sendPassResetSuccessEmail = async (
 ) => {
   const transport = generateMailTransporter();
 
-  const resetMsg = `Dear ${name}, we just updated your new password. Youn can now sign in with your new password!`;
+  const message = `Dear ${name} we just updated your new password. You can now sign in with your new password.`;
 
   transport.sendMail({
     to: email,
     from: VERIFICATION_EMAIL,
-    subject: "Password Reset Sucessfully",
-
+    subject: "Password Reset Successfully",
     html: generateTemplate({
-      title: "Password Reset Sucessfully!",
-      message: resetMsg,
+      title: "Password Reset Successfully",
+      message,
       logo: "cid:logo",
       banner: "cid:forget_password",
       link: SIGN_IN_URL,
-      btnTitle: "Log In",
+      btnTitle: "Log in",
     }),
     attachments: [
       {

@@ -1,19 +1,18 @@
 import { compare, hash } from "bcrypt";
 import { Model, model, ObjectId, Schema } from "mongoose";
 
-// user Interfaces
+// interface (typescript)
 interface UserDocument {
   name: string;
   email: string;
   password: string;
   verified: boolean;
   avatar?: { url: string; publicId: string };
-  token: string[];
+  tokens: string[];
   favorites: ObjectId[];
   followers: ObjectId[];
   followings: ObjectId[];
 }
-
 interface Methods {
   comparePassword(password: string): Promise<boolean>;
 }
@@ -62,16 +61,17 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
         ref: "User",
       },
     ],
-    token: [String],
+    tokens: [String],
   },
   { timestamps: true }
 );
 
-// Password Hashing
 userSchema.pre("save", async function (next) {
+  // hash the token
   if (this.isModified("password")) {
     this.password = await hash(this.password, 10);
   }
+
   next();
 });
 

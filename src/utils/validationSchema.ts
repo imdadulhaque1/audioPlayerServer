@@ -1,23 +1,19 @@
-import { isValidObjectId } from "mongoose";
 import * as yup from "yup";
+import { isValidObjectId } from "mongoose";
 
-export const createUserSchema = yup.object().shape({
+export const CreateUserSchema = yup.object().shape({
   name: yup
     .string()
     .trim()
     .required("Name is missing!")
     .min(3, "Name is too short!")
-    .max(50, "Name is too Long!"),
-  email: yup
-    .string()
-    .email()
-    .required("Email is missing!")
-    .email("Invalid email address"),
+    .max(20, "Name is too long!"),
+  email: yup.string().required("Email is missing!").email("Invalid email id!"),
   password: yup
     .string()
     .trim()
     .required("Password is missing!")
-    .min(6, "Password is too short!")
+    .min(8, "Password is too short!")
     .matches(
       /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])[a-zA-Z\d!@#\$%\^&\*]+$/,
       "Password is too simple!"
@@ -25,7 +21,7 @@ export const createUserSchema = yup.object().shape({
 });
 
 export const TokenAndIDValidation = yup.object().shape({
-  token: yup.string().trim().required("Invalid Token"),
+  token: yup.string().trim().required("Invalid token!"),
   userId: yup
     .string()
     .transform(function (value) {
@@ -35,19 +31,10 @@ export const TokenAndIDValidation = yup.object().shape({
       return "";
     })
     .required("Invalid userId!"),
-  password: yup
-    .string()
-    .trim()
-    .required("Password is missing!")
-    .min(6, "Password is too short!")
-    .matches(
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])[a-zA-Z\d!@#\$%\^&\*]+$/,
-      "Password is too simple!"
-    ),
 });
 
 export const UpdatePasswordSchema = yup.object().shape({
-  token: yup.string().trim().required("Invalid Token"),
+  token: yup.string().trim().required("Invalid token!"),
   userId: yup
     .string()
     .transform(function (value) {
@@ -61,7 +48,7 @@ export const UpdatePasswordSchema = yup.object().shape({
     .string()
     .trim()
     .required("Password is missing!")
-    .min(6, "Password is too short!")
+    .min(8, "Password is too short!")
     .matches(
       /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])[a-zA-Z\d!@#\$%\^&\*]+$/,
       "Password is too simple!"

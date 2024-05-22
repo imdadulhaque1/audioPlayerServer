@@ -1,25 +1,26 @@
 import {
   create,
-  generateForgotPasswordLink,
+  generateForgetPasswordLink,
   grantValid,
   sendReVerificationToken,
-  verifyEmail,
   updatePassword,
+  verifyEmail,
 } from "#/controllers/user";
 import { isValidPassResetToken } from "#/middleware/auth";
 import { validate } from "#/middleware/validator";
 import {
-  createUserSchema,
+  CreateUserSchema,
   TokenAndIDValidation,
   UpdatePasswordSchema,
 } from "#/utils/validationSchema";
 import { Router } from "express";
+
 const router = Router();
 
-router.post("/create", validate(createUserSchema), create);
+router.post("/create", validate(CreateUserSchema), create);
 router.post("/verify-email", validate(TokenAndIDValidation), verifyEmail);
 router.post("/re-verify-email", sendReVerificationToken);
-router.post("/forgot-password", generateForgotPasswordLink);
+router.post("/forget-password", generateForgetPasswordLink);
 router.post(
   "/verify-pass-reset-token",
   validate(TokenAndIDValidation),
@@ -32,4 +33,5 @@ router.post(
   isValidPassResetToken,
   updatePassword
 );
+
 export default router;
